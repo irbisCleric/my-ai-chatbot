@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /home/wlsuser/development/my-ai-chatbot/chatbot-env
+set -gx VIRTUAL_ENV /home/wsluser/development/my-ai-chatbot/chatbot-env
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH
