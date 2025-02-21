@@ -1,54 +1,51 @@
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import mysql.connector
+from mysql.connector import Error
 
-## DB connect
-DB_NAME = "mydatabase"
-DB_USER = "myuser"
-DB_PASSWORD = "mypassword"
-DB_HOST = "localhost"
-DB_PORT = "5432"
-
-def get_connection():
+def connect_to_db():
+    """Function to connect to the database."""
     try:
-        conn = psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT,
-        cursor_factory=RealDictCursor
-    )
-        return conn
-    except Exception as e:
-        print(f"Error connection to DB: {e}")
+        connection = mysql.connector.connect(
+            host='localhost',
+            user='chatbot_user',
+            password='mypassword',
+            database='chatbot_db'
+        )
+        if connection.is_connected():
+            print("Connected to MySQL database")
+        return connection
+    except Error as e:
+        print(f"Error: {e}")
         return None
 
-def create_table():
-    try:
-        conn = get_connection()
-        if conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS messages (
-                    id SERIAL PRIMARY KEY,
-                    user_message TEXT NOT NULL,
-                    bot_response TEXT NOT NULL,
-                    timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-                );
-            """)
-            conn.commit()
-            print("✅ Table created!")
-            cursor.close()
-            conn.close()
-    except Exception as e:
-        print(f"Error during creating table: {e}")
+def insert_message(sender, message):
+    """Function to insert a message into the table."""
+    connection = connect_to_db()
+    if connection:
+        cursor = connection.cursor()
+        query = "INSERT INTO messages (sender, message) VALUES (%s, %s)"
+        cursor.execute(query, (sender, message))
+        connection.commit()
+        print("Message inserted successfully")
+        cursor.close()
+        connection.close()
 
-# Check connection
-if __name__ == "__main__":
-    conn = get_connection()
-    if conn:
-        print("✅ Successful connected to DB!")
-        conn.close()
-    else:
-        print("❌ Issue during DB connect.")
-    create_table()
+def get_messages():
+    """Function to retrieve all messages from the table."""
+    connection = connect_to_db()
+    if connection:
+        cursor = connection.cursor()
+        query = "SELECT * FROM messages"
+        cursor.execute(query)
+        records = cursor.fetchall()
+        print("All messages:")
+        for record in records:
+            print(f"ID: {record[0]}, Sender: {record[1]}, Message: {record[2]}, Sent at: {record[3]}")
+        cursor.close()
+        connection.close()
+
+# Example usage:
+# Inserting a message
+insert_message('Chatbot', 'Hello! How can I assist you today?')
+
+# Retrieving all messages
+get_messages()
