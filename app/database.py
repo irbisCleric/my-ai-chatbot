@@ -1,13 +1,21 @@
 import mysql.connector
 from mysql.connector import Error
+import openai
+from dotenv import load_dotenv
+import os
+
+# Load env variables
+load_dotenv()
+
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def connect_to_db():
-    """Function to connect to the database."""
+    """Connect to the MySQL database."""
     try:
         connection = mysql.connector.connect(
             host='localhost',
             user='chatbot_user',
-            password='mypassword',
+            password='your_password',
             database='chatbot_db'
         )
         if connection.is_connected():
@@ -18,7 +26,7 @@ def connect_to_db():
         return None
 
 def insert_message(sender, message):
-    """Function to insert a message into the table."""
+    """Insert message into the database."""
     connection = connect_to_db()
     if connection:
         cursor = connection.cursor()
@@ -29,23 +37,33 @@ def insert_message(sender, message):
         cursor.close()
         connection.close()
 
-def get_messages():
-    """Function to retrieve all messages from the table."""
-    connection = connect_to_db()
-    if connection:
-        cursor = connection.cursor()
-        query = "SELECT * FROM messages"
-        cursor.execute(query)
-        records = cursor.fetchall()
-        print("All messages:")
-        for record in records:
-            print(f"ID: {record[0]}, Sender: {record[1]}, Message: {record[2]}, Sent at: {record[3]}")
-        cursor.close()
-        connection.close()
+def get_ai_response(prompt):
+    """Get response from OpenAI model."""
+    try:
+        response = openai.Completion.create(
+            engine="gpt-3.5-turbo",
+            prompt=prompt,
+            max_tokens=150,
+            temperature=0.7,
+        )
+        return response.choices[0].text.strip()
+    except Exception as e:
+        return f"Error: {e}"
 
-# Example usage:
-# Inserting a message
-insert_message('Chatbot', 'Hello! How can I assist you today?')
+def chatbot_conversation(user_message):
+    """Handle chatbot conversation."""
+    # Save user's message to database
+    insert_message('User', user_message)
+    
+    # Get AI response
+    ai_message = get_ai_response(user_message)
+    
+    # Save AI's response to database
+    insert_message('Chatbot', ai_message)
+    
+    return ai_message
 
-# Retrieving all messages
-get_messages()
+# Example usage
+user_input = "Hello, how are you?"
+ai_reply = chatbot_conversation(user_input)
+print(ai_reply)

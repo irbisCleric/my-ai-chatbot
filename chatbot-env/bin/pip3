@@ -1,4 +1,4 @@
-#!/home/wsluser/development/my-ai-chatbot/chatbot-env/bin/python3
+#!/home/wsluser/development/my-ai-chatbot/chatbot-env/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
