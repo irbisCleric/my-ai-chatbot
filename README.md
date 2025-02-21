@@ -8,7 +8,7 @@ A chatbot project that performs basic user interaction functions and stores chat
 - **Basic AI**: A simple NLP model can be added to analyze user queries (e.g., to identify keywords in requests).
 
 ## Technical Details:
-- **PostgreSQL** is used for storing chat history.
+- **MySQL** is used for storing chat history.
 - A **basic NLP model** can be added for processing user queries.
 - A simple API for bot interaction.
 
