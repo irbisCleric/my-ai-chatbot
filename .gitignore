@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+*.db
+*.sqlite3
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# React/JS
+node_modules/
+build/
+dist/
+*.log
+*.env
+*.eslintcache
+*.prettierignore
+*.next/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Linux
+*.swp
+
+# Virtual environment
+/chatbot-env/
