@@ -127,8 +127,10 @@ def chatbot_conversation(user_message):
 
     if category == "weather":
         ai_message = get_weather()
+        insert_message('Chatbot', ai_message)  # Save AI response
     elif category == "news":
         ai_message = get_news()
+        insert_message('Chatbot', ai_message)  # Save AI response
     else:
         ai_message = get_ai_response(user_message) # Get AI response
         insert_message('Chatbot', ai_message)  # Save AI response
@@ -138,7 +140,7 @@ def chatbot_conversation(user_message):
 # Test calls
 user_input = "What is the weather now?"
 print(chatbot_conversation(user_input))
-user_input = "Tell me last news"
-print(chatbot_conversation(user_input))
-user_input = "How to make borscht?"
-print(chatbot_conversation(user_input))
+# user_input = "Tell me last news"
+# print(chatbot_conversation(user_input))
+# user_input = "How to make borscht?"
+# print(chatbot_conversation(user_input))
