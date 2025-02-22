@@ -1,11 +1,10 @@
-import mysql.connector
-from mysql.connector import Error
 from openai import OpenAI
-from dotenv import load_dotenv
+from database import insert_message, get_last_messages
 import os
+from dotenv import load_dotenv
 import requests
 
-# Load env variables
+# Loading env variables
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
@@ -23,6 +22,7 @@ def classify_request(user_message):
             return category
 
     return "general"
+
 
 def get_weather():
     API_KEY = os.getenv("WEATHER_API_KEY")
@@ -57,49 +57,6 @@ def get_news():
     except Exception as e:
         return f"Error during receiving news: {e}"
 
-def connect_to_db():
-    """Connect to the MySQL database."""
-    try:
-        connection = mysql.connector.connect(
-            host='localhost',
-            user='chatbot_user',
-            password='mypassword',
-            database='chatbot_db'
-        )
-        if connection.is_connected():
-            print("Connected to MySQL database")
-        return connection
-    except Error as e:
-        print(f"Error: {e}")
-        return None
-
-def insert_message(sender, message):
-    """Insert message into the database."""
-    connection = connect_to_db()
-    if connection:
-        cursor = connection.cursor()
-        query = "INSERT INTO messages (sender, message) VALUES (%s, %s)"
-        cursor.execute(query, (sender, message))
-        connection.commit()
-        print("Message inserted successfully")
-        cursor.close()
-        connection.close()
-
-def get_last_messages(limit=5):
-    """Retrieve the last 'limit' messages from the database for context."""
-    connection = connect_to_db()
-    if connection:
-        cursor = connection.cursor()
-        query = "SELECT sender, message FROM messages ORDER BY id DESC LIMIT %s"
-        cursor.execute(query, (limit,))
-        records = cursor.fetchall()
-        cursor.close()
-        connection.close()
-
-        # Reverse the order to maintain conversation flow
-        return [{"role": "assistant" if sender == "Chatbot" else "user", "content": message} for sender, message in records][::-1]
-
-    return []
 
 def get_ai_response(prompt):
     """Get response from OpenAI model with conversation context."""
