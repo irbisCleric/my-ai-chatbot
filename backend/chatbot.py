@@ -1,8 +1,8 @@
 from openai import OpenAI
-from database import insert_message, get_last_messages
 import os
 from dotenv import load_dotenv
 import requests
+from backend.database import insert_message, get_last_messages
 
 # Loading env variables
 load_dotenv()
@@ -95,8 +95,8 @@ def chatbot_conversation(user_message):
     return ai_message
 
 # Test calls
-user_input = "What is the weather now?"
-print(chatbot_conversation(user_input))
+# user_input = "What is the weather now?"
+# print(chatbot_conversation(user_input))
 # user_input = "Tell me last news"
 # print(chatbot_conversation(user_input))
 # user_input = "How to make borscht?"
